@@ -9,7 +9,10 @@ from nap.url import Url
 from po_projects_client import __version__ as client_version
 from po_projects_client import logging_handler
 
-class DoesNotExistException(HTTPError):
+class ProjectDoesNotExistException(HTTPError):
+    pass
+
+class PotDoesNotExistException(HTTPError):
     pass
 
 class POProjectClient(object):
@@ -65,7 +68,7 @@ class POProjectClient(object):
         self.project_detail_url = self.api_endpoint_projectcurrent.join('{0}/'.format(slug))
         response = self.project_detail_url.get()#.json()
         if response.status_code == 404:
-            raise DoesNotExistException("Project with slug '{0}' does not exist.".format(slug))
+            raise ProjectDoesNotExistException("Project with slug '{0}' does not exist.".format(slug))
         elif response.status_code != 200:
             response.raise_for_status()
         
@@ -74,7 +77,7 @@ class POProjectClient(object):
         self.project_slug = datas['slug']
         self.project_tarball_url = datas['tarball_url']
  
-    def pull(self, slug, destination, commit=True):
+    def pull(self, slug, destination, kind, commit=True):
         """
         Get the tarball to install updated PO files
         
@@ -84,7 +87,7 @@ class POProjectClient(object):
         # Get project datas
         self.get_project(slug)
         
-        tarball_url = Url(self.project_tarball_url, auth=self.auth_settings)
+        tarball_url = Url(self.project_tarball_url, params={'kind': kind}, auth=self.auth_settings)
         # Get the tarball
         response = tarball_url.get(stream=True)
                 
@@ -122,6 +125,35 @@ class POProjectClient(object):
             self.logger.info("Succeed to download the tarball")
         
         return self.project_id, self.project_slug
+ 
+    def push(self, slug, locale_path, kind, django_default_locale=None, commit=True):
+        """
+        Send the current locale POT file to the service to trigger the 
+        project catalogs update from the given POT
+        
+        @commit arg to effectively install PO files or not
+        """
+        self.logger.debug("Sending current POT file")
+        # Get project datas
+        self.get_project(slug)
+        
+        # Resolve and validate the POT file path
+        pot_filepath = os.path.join(locale_path, "LC_MESSAGES/messages.pot")
+        if kind == 'django':
+            pot_filepath = os.path.join(locale_path, django_default_locale, "LC_MESSAGES/django.po")
+        if not os.path.exists(pot_filepath):
+            raise PotDoesNotExistException("Catalog file does not exists: '{0}'".format(pot_filepath))
+        
+        # Open the file path
+        with open(pot_filepath, 'r') as infile:
+            pot_file_content = infile.read()
+        
+        # Send the current POT file content
+        response = self.project_detail_url.patch(data=json.dumps({'pot': pot_file_content}), headers=self.client_headers)
+        if response.status_code != 200:
+            if self.debug_requests:
+                print response.json()
+            response.raise_for_status()
  
 
 # Testing

@@ -5,7 +5,7 @@ class POProjectConfig(object):
     PO-Project config object know how to get, set and save data from/to the config file
     """
     main_section_name = 'PO_Project'
-    options = ['user', 'password', 'host', 'locale_path', 'kind', 'project_id', 'project_slug']
+    options = ['user', 'password', 'host', 'locale_path', 'kind', 'django_default_locale', 'project_id', 'project_slug']
     integers = ['project_id']
     booleans = []
     
