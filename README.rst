@@ -46,7 +46,7 @@ Also you can write the config file before the first usage to avoid to give comma
 * ``user`` and ``password`` is from an User account registered on the service API, it needs to be an admin account (``is_staff`` = True);
 * ``host`` is the full URL to use to connect to the service API;
 * ``locale_path`` can be every relative path  or an absolute path to the project locales directory which will contains the message catalogs structure with the PO files;
-* ``kind`` can be ``django`` or ``optimus``;
+* ``kind`` can be ``django`` (for a Django project) or ``messages`` (for common gettext projects like Optimus);
 
 Actually you cannot create and register a new project on the service from the client, you have to create it before on the service, then note the slug name to use it with the client.
 

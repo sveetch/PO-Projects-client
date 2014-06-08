@@ -28,7 +28,7 @@ cmd_logfile_opt = arg('--logfile', default=None, help="A filepath that if setted
 cmd_timer_opt = arg('-t', '--timer', default=False, action='store_true', help="Display elapsed time at the end of execution")
 cmd_projectslug_opt = arg('--project_slug', default=None, help="Project slug name")
 cmd_localepath_opt = arg('--locale_path', default=None, help="Path to the locale directory")
-cmd_kind_opt = arg('--kind', default='django', help="Kind of message catalog", choices=['django','optimus'])
+cmd_kind_opt = arg('--kind', default='django', help="Kind of message catalog", choices=['django','messages'])
 cmd_djangodefaultlocale_opt = arg('--django_default_locale', default=None, help="Default locale used to generate a temporary POT file")
 
 

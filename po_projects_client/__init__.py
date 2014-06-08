@@ -2,4 +2,4 @@
 """
 REST client to retrieve and push data on a PO-Projects service
 """
-__version__ = '0.1'
+__version__ = '0.1.1'
