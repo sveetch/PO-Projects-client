@@ -42,7 +42,7 @@ class CliInterfaceBase(object):
         self.args = args
         
         self.config = None
-        self.conn = None
+        self.con = None
         
         self.starttime = datetime.datetime.now()
         # Init, load and builds
